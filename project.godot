@@ -15,9 +15,9 @@ _global_script_class_icons={
 
 [application]
 
-config/icon="res://icon.png"
 config/name="godot-wild-jam-26"
 run/main_scene="res://scenes/game.tscn"
+config/icon="res://icon.png"
 
 [input]
 

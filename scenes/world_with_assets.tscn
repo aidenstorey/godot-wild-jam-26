@@ -3,49 +3,57 @@
 [ext_resource path="res://assets/tiles.png" type="Texture" id=1]
 [ext_resource path="res://assets/grave.png" type="Texture" id=2]
 [ext_resource path="res://assets/grass.png" type="Texture" id=3]
-[ext_resource path="res://scenes/world_with_assets.gd" type="Script" id=4]
+[ext_resource path="res://scripts/light_controller.gd" type="Script" id=4]
 
 [sub_resource type="Shader" id=1]
-code = "// Reference https://www.patreon.com/posts/i-created-my-own-42040761
-
-shader_type canvas_item;
+code = "shader_type canvas_item;
 render_mode blend_mix;
 
-uniform float time_elapsed = 0.0;
-uniform float time_elapsed_2 = 0.0;
-uniform vec4 dark_color : hint_color = vec4( 0.25, 0.0625, 0.25, 1.0 );
-uniform vec4 light_color : hint_color = vec4( 0.75, 0.9375, 0.75, 1.0 );
-uniform float light_level : hint_range( 0.0, 1.0 ) = 0.5;
-uniform float offset_modifier : hint_range( 0.0, 8.0 ) = 0.0;
-uniform float light_strength_modifier : hint_range( 0.0, 1.0 ) = 1.0;
-uniform float radius : hint_range( 0.0, 200.0 ) = 100.0;
-uniform float flicker_size : hint_range( 0.0, 50.0 ) = 10.0;
+uniform sampler2D light_data;
+uniform int light_count = 0;
 
-void fragment() 
+uniform vec4 dark_color: hint_color = vec4( 0.25, 0.0625, 0.25, 1.0 );
+uniform vec4 default_light_color: hint_color = vec4( 0.25, 0.0625, 0.25, 1.0 );
+uniform float light_level: hint_range( 0.0, 1.0 ) = 0.0;
+
+uniform float offset_modifier: hint_range( 0.0, 8.0 ) = 1.0;
+uniform float light_strength_modifier: hint_range( 0.0, 1.0 ) = 1.0;
+
+vec2 texture_size( sampler2D texture )
 {
-	float strength = 3.0;
+	ivec2 size = textureSize( texture, 0 );
+	return vec2( float( size.x ), float( size.y ) );
+}
+
+void fragment()
+{
+	float light_value = 0.0;
+	vec4 light_color = default_light_color;
 	
-	float final_radius = radius + sin( time_elapsed_2 ) * flicker_size; 
+	vec2 size = texture_size( TEXTURE );
 	
-	ivec2 ts = textureSize( TEXTURE, 0 );
-	vec2 fts = vec2( float( ts.x ), float( ts.y ) );
+	for( int i = 0; i < light_count; ++i )
+	{
+		vec4 texel = texelFetch( light_data, ivec2( i, 0 ), 0 );
+		texel.y = size.y - texel.y;
+		
+		float radius = texel.a;
+		float strength = texel.b;
+		
+		float dist = distance( texel.xy, UV * size );
+		dist = min( dist / radius, 1.0 );
+		
+		dist = max( ( dist * offset_modifier ) - ( offset_modifier - 1.0 ), 0.0 );
+		
+		float value = ( 1.0 - dist ) * strength * light_strength_modifier;
+		if ( value > light_value )
+		{
+			light_value = value;
+			light_color = texelFetch( light_data, ivec2( i, 1 ), 0 );
+		}
+	}
 	
-	mat2 rotation = mat2( 
-		vec2( cos( time_elapsed ), -sin( time_elapsed ) ),
-		vec2( sin( time_elapsed ), cos( time_elapsed ) )
-	); 
-	vec2 offset = vec2( 100.0, 0.0 );
-	vec2 position = fts * 0.5 + offset * rotation;
-	
-	vec2 uv = normalize( fts * UV );
-	float dist = distance( fts * UV, position );
-	dist = min( dist / final_radius, 1.0 );
-	dist = max( ( dist * offset_modifier ) - ( offset_modifier - 1.0 ), 0.0 );
-	
-	float value = ( 1.0 - dist ) * strength * light_strength_modifier;
-	value = clamp( value, 0.0, 1.0 );
-	
-	vec4 ambient_color = mix( dark_color, light_color, value );
+	vec4 ambient_color = mix( dark_color, light_color, light_value );
 	ambient_color.a *= 1.0 - light_level;
 	
 	vec4 screen_color = texture( TEXTURE, UV );
@@ -56,15 +64,12 @@ custom_defines = ""
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = SubResource( 1 )
-shader_param/time_elapsed = 0.0
-shader_param/time_elapsed_2 = 0.0
+shader_param/light_count = 0
 shader_param/dark_color = Color( 0.184314, 0.0470588, 0.184314, 1 )
-shader_param/light_color = Color( 0.819608, 0.807843, 0.701961, 1 )
+shader_param/default_light_color = Color( 0.25, 0.0625, 0.25, 1 )
 shader_param/light_level = 0.0
 shader_param/offset_modifier = 1.344
 shader_param/light_strength_modifier = 1.0
-shader_param/radius = 150.538
-shader_param/flicker_size = 10.0
 
 [sub_resource type="TileSet" id=3]
 0/name = "grass.png 0"

@@ -8,15 +8,20 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Node",
+"class": "light_source",
+"language": "GDScript",
+"path": "res://scripts/light_source.gd"
+} ]
 _global_script_class_icons={
-
+"light_source": ""
 }
 
 [application]
 
 config/name="godot-wild-jam-26"
-run/main_scene="res://scenes/game.tscn"
+run/main_scene="res://scenes/world_with_assets.tscn"
 config/icon="res://icon.png"
 
 [input]

@@ -4,10 +4,14 @@ onready var scene_tree: SceneTree = self.get_tree()
 
 var image: Image = Image.new()
 var texture: ImageTexture = ImageTexture.new()
-
+var player : Player
 
 func _ready() -> void:
 	self.image.create( 128, 2, false, Image.FORMAT_RGBAH )
+	
+	var p = preload("res://Player.tscn")
+	player = p.instance()
+	add_child(player)
 
 
 func _process(delta: float) -> void:

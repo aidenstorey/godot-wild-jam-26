@@ -52,11 +52,12 @@ void fragment()
 	for( int i = 0; i < light_count; ++i )
 	{
 		vec4 position = texelFetch( light_data, ivec2( i, 0 ), 0 );
-		position.y = size.y - position.y;
+		position.x *= 1024.0;
+		position.y = size.y - position.y * 600.0;
 		
 		vec4 data = texelFetch( light_data, ivec2( i, 1 ), 0 );
 		
-		float radius = data.a  + 10.0 * noise1d( TIME * 5.0 + data.x * 100.0 );
+		float radius = data.a * 1000.0  + 10.0 * noise1d( TIME * 5.0 + data.x * 100.0 );
 		float strength = data.b;
 		
 		float dist = distance( position.xy, UV * size );
@@ -65,7 +66,6 @@ void fragment()
 		dist = max( ( dist * offset_modifier ) - ( offset_modifier - 1.0 ), 0.0 );
 		
 		float value = ( 1.0 - dist ) * strength * light_strength_modifier;
-//
 		
 		light_color = mix( light_color, texelFetch( light_data, ivec2( i, 2 ), 0 ), value );
 		light_value += value;
@@ -80,6 +80,7 @@ void fragment()
 	
 	COLOR = screen_color * ambient_color;
 }"
+custom_defines = ""
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = SubResource( 1 )
@@ -346,6 +347,7 @@ void fragment()
 	
 	COLOR = vec4( color.rgb, fbm( coord + motion ) * 1.2 );
 }"
+custom_defines = ""
 
 [sub_resource type="ShaderMaterial" id=7]
 shader = SubResource( 6 )
@@ -390,7 +392,7 @@ cell_y_sort = true
 format = 1
 tile_data = PoolIntArray( 196611, 1, 0, 196614, 1, 0, 196617, 1, 0, 196620, 1, 0, 196626, 1, 0, 196629, 1, 0, 196632, 1, 0, 196635, 1, 0, 393219, 1, 0, 393222, 1, 0, 393225, 1, 0, 393237, 1, 0, 393240, 1, 0, 393243, 1, 0, 458767, 1, 0, 458773, 0, 0, 458776, 0, 0, 458779, 0, 0, 589827, 1, 0, 589830, 1, 0, 589833, 1, 0, 589845, 1, 0, 589848, 1, 0, 589851, 1, 0, 720899, 0, 0, 720902, 0, 0, 720905, 0, 0, 720917, 0, 0, 720920, 0, 0, 720923, 0, 0, 786435, 1, 0, 786438, 1, 0, 786441, 1, 0, 786444, 1, 0, 786450, 1, 0, 786453, 1, 0, 786456, 1, 0, 786459, 1, 0 )
 
-[node name="temp" type="Sprite" parent="Viewport"]
+[node name="fog" type="Sprite" parent="Viewport"]
 material = SubResource( 7 )
 position = Vector2( 493.925, 322.392 )
 texture = ExtResource( 6 )

@@ -35,11 +35,11 @@ func _process(_delta: float) -> void:
 		if light is light_source:
 			var position = light.global_position.floor()
 			self.image.set_pixel( i, 0, Color( \
-				position.x, position.y, \
+				position.x / 1024.0, position.y / 600.0, \
 				0.0, 0.0 ) )
 			self.image.set_pixel( i, 1, Color( \
 			light.offset, 0.0, \
-			light.strength, light.radius ) )
+			light.strength, light.radius / 1000.0 ) )
 
 			self.image.set_pixel( i, 2, light.color )
 

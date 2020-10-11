@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Node",
+"class": "Loaf",
+"language": "GDScript",
+"path": "res://scenes/Loaf.gd"
+}, {
 "base": "KinematicBody2D",
 "class": "Player",
 "language": "GDScript",
@@ -20,6 +25,7 @@ _global_script_classes=[ {
 "path": "res://scripts/light_source.gd"
 } ]
 _global_script_class_icons={
+"Loaf": "",
 "Player": "",
 "light_source": ""
 }

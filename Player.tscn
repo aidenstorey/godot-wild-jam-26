@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/Player.gd" type="Script" id=1]
 [ext_resource path="res://assets/temp_player.png" type="Texture" id=2]
+[ext_resource path="res://scripts/light_source.tscn" type="PackedScene" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 32.1495, 36.5092 )
@@ -9,12 +10,20 @@ extents = Vector2( 32.1495, 36.5092 )
 [node name="Player" type="KinematicBody2D"]
 position = Vector2( 512.421, 79.4103 )
 script = ExtResource( 1 )
+speed = 5
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( -1.90182, -3.40009 )
+modulate = Color( 1, 1, 1, 0.8 )
+position = Vector2( -1.90186, -3.40009 )
 scale = Vector2( 0.15, 0.15 )
 texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2( -2.14481, 0.594757 )
 shape = SubResource( 1 )
+
+[node name="light_source" parent="." instance=ExtResource( 3 )]
+position = Vector2( -6.80948, -1.09272 )
+color = Color( 0.768627, 1, 0.945098, 1 )
+radius = 100.0

@@ -4,7 +4,6 @@ onready var scene_tree: SceneTree = self.get_tree()
 
 var image: Image = Image.new()
 var texture: ImageTexture = ImageTexture.new()
-var time_elapsed: float = 0.0
 var player : Player
 
 
@@ -13,7 +12,7 @@ func _ready() -> void:
 
 	var p = preload("res://Player.tscn")
 	player = p.instance()
-	add_child(player)
+	$Viewport.add_child(player)
 
 
 func _process(delta: float) -> void:
@@ -40,6 +39,3 @@ func _process(delta: float) -> void:
 
 	self.material.set_shader_param( "light_count", lights.size() )
 	self.material.set_shader_param( "light_data", texture )
-
-	self.time_elapsed += delta * 5.0
-	self.material.set_shader_param( "time_elapsed", self.time_elapsed );

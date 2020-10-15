@@ -1,10 +1,9 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://assets/tiles.png" type="Texture" id=1]
 [ext_resource path="res://assets/grave.png" type="Texture" id=2]
 [ext_resource path="res://assets/grass.png" type="Texture" id=3]
 [ext_resource path="res://scripts/light_controller.gd" type="Script" id=4]
-[ext_resource path="res://scripts/light_source.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/temp.png" type="Texture" id=6]
 
 [sub_resource type="Shader" id=1]
@@ -20,9 +19,6 @@ uniform float light_level: hint_range( 0.0, 1.0 ) = 0.0;
 
 uniform float offset_modifier: hint_range( 0.0, 8.0 ) = 1.0;
 uniform float light_strength_modifier: hint_range( 0.0, 1.0 ) = 1.0;
-
-uniform float flicker_ratio: hint_range( 0.0, 1.0 ) = 0.9;
-uniform float time_elapsed = 0.0;
 
 vec2 texture_size( sampler2D texture )
 {
@@ -57,6 +53,8 @@ void fragment()
 		
 		vec4 data = texelFetch( light_data, ivec2( i, 1 ), 0 );
 		
+		vec4 color = texelFetch( light_data, ivec2( i, 2 ), 0 );
+		
 		float radius = data.a * 1000.0  + 10.0 * noise1d( TIME * 5.0 + data.x * 100.0 );
 		float strength = data.b;
 		
@@ -67,7 +65,7 @@ void fragment()
 		
 		float value = ( 1.0 - dist ) * strength * light_strength_modifier;
 		
-		light_color = mix( light_color, texelFetch( light_data, ivec2( i, 2 ), 0 ), value );
+		light_color = mix( light_color, color, value );
 		light_value += value;
 	}
 	
@@ -90,8 +88,6 @@ shader_param/default_light_color = Color( 0.25, 0.0625, 0.25, 1 )
 shader_param/light_level = 0.0
 shader_param/offset_modifier = 2.5
 shader_param/light_strength_modifier = 1.0
-shader_param/flicker_ratio = 0.975
-shader_param/time_elapsed = 0.0
 
 [sub_resource type="TileSet" id=3]
 0/name = "grass.png 0"
@@ -302,8 +298,8 @@ shader_param/time_elapsed = 0.0
 [sub_resource type="Shader" id=6]
 code = "shader_type canvas_item;
 
-uniform int OCTAVES = 4;
-uniform vec4 color : hint_color = vec4( 1.0 );
+const int OCTAVES = 4;
+const vec4 color = vec4( 1.0 );
 
 highp float random2d( vec2 coord ) 
 {
@@ -351,8 +347,6 @@ custom_defines = ""
 
 [sub_resource type="ShaderMaterial" id=7]
 shader = SubResource( 6 )
-shader_param/OCTAVES = 4
-shader_param/color = Color( 1, 1, 1, 1 )
 
 [node name="viewport" type="ViewportContainer"]
 material = SubResource( 2 )
@@ -396,9 +390,3 @@ tile_data = PoolIntArray( 196611, 1, 0, 196614, 1, 0, 196617, 1, 0, 196620, 1, 0
 material = SubResource( 7 )
 position = Vector2( 493.925, 322.392 )
 texture = ExtResource( 6 )
-
-[node name="light_source2" parent="." instance=ExtResource( 5 )]
-position = Vector2( 395.861, 244.779 )
-
-[node name="light_source" parent="." instance=ExtResource( 5 )]
-position = Vector2( 502.99, 163.121 )

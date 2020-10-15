@@ -5,7 +5,7 @@ onready var scene_tree: SceneTree = self.get_tree()
 var image: Image = Image.new()
 var texture: ImageTexture = ImageTexture.new()
 var player : Player
-var slice : Sprite
+var slice : AnimatedSprite
 var sliceScene
 var slicePosition = Vector2(-1, -1)
 var rng : RandomNumberGenerator
@@ -13,7 +13,7 @@ var rng : RandomNumberGenerator
 func _ready() -> void:
 	self.image.create( 128, 3, false, Image.FORMAT_RGBAH )
 	# spawn first Toast
-	var p = preload("res://Player.tscn")
+	var p = preload("res://scenes/Player.tscn")
 	player = p.instance()
 	add_child(player)
 	player.connect("slice_collected", self, "on_slice_collected")
@@ -72,6 +72,6 @@ func restart_game() -> void:
 	if not slice == null:
 		slice.free()
 	slicePosition = Vector2(-1, -1)
-	player.set_grid_position(Vector2(1, 1))
+	player.position = Vector2( 512, 250 )
 	player.reset()
 	player.canMove = true

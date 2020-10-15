@@ -48,12 +48,20 @@ func _physics_process(delta):
 	
 	if right and (loaf.size() == 0 or lastMovement != Vector2(-step, 0)):
 		currentMovement = Vector2(step, 0)
+		$AnimatedSprite.play( "move" )
+		self.scale.x = -1
 	elif left and (loaf.size() == 0 or lastMovement != Vector2(step, 0)):
 		currentMovement = Vector2(-step, 0)
+		$AnimatedSprite.play( "move" )
+		self.scale.x = 1
 	elif up and (loaf.size() == 0 or lastMovement != Vector2(0, step)):
 		currentMovement = Vector2(0, -step)
+		$AnimatedSprite.play( "up" )
+		self.scale.x = 1
 	elif down and (loaf.size() == 0 or lastMovement !=  Vector2(0, -step)):
 		currentMovement = Vector2(0, step)
+		$AnimatedSprite.play( "down" )
+		self.scale.x = 1
 	
 	if currentMovement != lastMovement:
 		changeDirection = true
